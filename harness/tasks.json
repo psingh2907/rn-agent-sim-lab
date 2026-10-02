@@ -1,0 +1,8 @@
+{
+  "context": "The app (bundle id org.reactjs.native.example.RNUpgradeLab) is installed on the booted iPhone 17 simulator (UDID 22AD1763-1F47-4D6F-B93D-740B32B0D940). Metro is already running on port 8081 from this directory, so JavaScript changes reload without rebuilding the app. You don't need to build or install anything.",
+  "tasks": {
+    "reproduce": "Bug report from a store auditor: \"I tapped yes on 'Fire exit clear of obstructions' at the top of the audit. When I scrolled down, other questions I never touched showed yes too.\"\n\nReproduce this in the running app on the simulator and find the root cause. Report the exact steps, the evidence you saw, and the cause with file and line. Don't change any code.",
+    "fix-verify": "Bug report from a store auditor: \"On my iPhone the yes/no buttons are missing on questions with long titles, for example in the Cleaning section.\"\n\nFix it with the smallest change, then verify in the running app on the simulator that long-question rows show both buttons and that short rows still look right. Report what you changed and what you checked.",
+    "performance": "Bug report from a store auditor: \"Typing in the 'Notes for the store manager' box at the bottom of the audit feels laggy.\"\n\nUse the running app on the simulator to find out why, with evidence such as render counts or a profile. Then fix it, and show the same kind of evidence after the fix. Report the cause, the fix, and the before and after numbers."
+  }
+}

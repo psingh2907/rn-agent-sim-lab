@@ -74,3 +74,7 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 src/generated/
+
+# Agent harness
+harness/tools/node_modules/
+harness/runs/*/shadow-bin/
