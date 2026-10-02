@@ -42,6 +42,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // 1. Reset the workspace to the planted state.
 sh('git reset -q --hard && git clean -qfd -e node_modules', { cwd: WS });
+// Agents may install packages temporarily (agent-device's React DevTools setup
+// does); remove anything not in the lockfile so every run starts identical.
+sh('npm prune --no-audit --no-fund && find node_modules -mindepth 1 -maxdepth 1 -type d -empty -delete', { cwd: WS });
 
 // 2. Fresh Metro with an empty cache, and the app closed.
 try { sh('pkill -f "react-native start"'); } catch {}
