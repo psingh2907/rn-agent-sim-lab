@@ -9,6 +9,7 @@ import { checklist, type ChecklistItem } from '../lib/data';
 export function ChecklistScreen() {
   const [items, setItems] = useState<ChecklistItem[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [note, setNote] = useState('');
   const notes = useRef<TextInputInstance>(null);
 
   // Load the list once the JS thread is idle.
@@ -48,7 +49,10 @@ export function ChecklistScreen() {
               placeholder="Notes for the store manager"
               style={styles.input}
               multiline
+              value={note}
+              onChangeText={setNote}
             />
+            <Text style={styles.count}>{note.length} / 500</Text>
             <Pressable onPress={() => notes.current?.blur()} style={styles.done}>
               <Text>Done</Text>
             </Pressable>
@@ -65,6 +69,7 @@ const styles = StyleSheet.create({
   section: { padding: 16, fontWeight: '700', backgroundColor: '#eee' },
   photo: { padding: 16 },
   footer: { padding: 16 },
+  count: { color: '#666', marginBottom: 8 },
   input: { minHeight: 80, borderWidth: 1, borderRadius: 8, padding: 8, marginBottom: 8 },
   done: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
 });
