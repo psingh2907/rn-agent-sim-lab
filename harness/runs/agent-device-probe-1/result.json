@@ -1,0 +1,73 @@
+{
+  "id": "agent-device-probe-1",
+  "tool": "agent-device",
+  "task": "probe",
+  "rep": 1,
+  "exitCode": 0,
+  "wallMs": 13003,
+  "timedOut": false,
+  "turns": 1,
+  "durationMs": 9875,
+  "costUsd": 0.12537250000000003,
+  "usage": {
+    "input_tokens": 4,
+    "cache_creation_input_tokens": 26730,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 1628,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 26730,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {},
+  "toolCallCount": 0,
+  "toolOutputBytes": 0,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "I haven't run anything. This is from my configuration.\n\n## Tools (17)\n\n| Tool | Purpose |\n|---|---|\n| `Task` | Launches subagents (Bash, general-purpose, statusline-setup, Explore, Plan) |\n| `TaskOutput` | Reads output from background tasks |\n| `TaskStop` | Stops a background task |\n| `Bash` | Runs shell commands |\n| `Glob` | Finds files by pattern |\n| `Grep` | Searches file contents (ripgrep) |\n| `Read` | Reads files, including images, PDFs and notebooks |\n| `Edit` | Does exact string replacement in files |\n| `Write` | Writes files |\n| `NotebookEdit` | Edits Jupyter notebook cells |\n| `WebFetch` | Fetches and summarizes a URL |\n| `WebSearch` | Searches the web |\n| `TodoWrite` | Manages the task list |\n| `AskUserQuestion` | Asks you multiple-choice questions |\n| `Skill` | Runs a skill |\n| `EnterPlanMode` | Enters plan mode |\n| `ExitPlanMode` | Requests approval of a plan |\n\n## MCP servers\n\nNone. I have no MCP tools configured.\n\n## Skills\n\n- `keybindings-help`\n- `agent-device-arm:android-emulator`\n- `agent-device-arm:agent-device`\n- `agent-device-arm:ios-simulator`\n- `agent-device-arm:dogfood`\n\n## Instructions about simulators, devices and apps\n\nThe system prompt has an `agent-device` section. Quoted verbatim:\n\n> Use agent-device only for app/device automation tasks.\n> For a normal app-driving task, start immediately. Do not probe first with `--help`, `--version`, `devices`, `appstate`, `snapshot`, or `screenshot`; open the requested app in the foreground and continue from its initial interactive snapshot.\n> For TV, Fire TV, or Vega OS tasks, read `agent-device help tv`.\n> For exploratory QA, read `agent-device help dogfood`.\n> For logs, network, audio, traces, or runtime failures, read `agent-device help debugging`.\n> For React Native component trees, props/state/hooks, slow renders, or rerenders, read `agent-device help react-devtools`.\n> For React Native JavaScript heap growth, heap snapshots, or retained-object leaks, read `agent-device help cdp`.\n> For React Native apps, overlays, Metro/Fast Refresh blockers, and routing to React DevTools or debugging evidence, read `agent-device help react-native`.\n>\n> Use the CLI in the integrated terminal.\n> If `agent-device` is not on PATH but the user installed it globally in another shell, resolve the absolute binary path instead of using `npx -y agent-device@latest`.\n> Prefer `open -> snapshot -i -> act -> re-snapshot -> verify -> close` where supported; otherwise follow target-specific help.\n> Keep mutating commands against one session serial.\n\nThe only other app-related information is what you told me in your message:\n\n- The bundle id is `org.reactjs.native.example.RNUpgradeLab`.\n- The simulator is the booted iPhone 17, UDID `22AD1763-1F47-4D6F-B93D-740B32B0D940`.\n- Metro is running on port 8081, so JavaScript changes reload without a rebuild.\n- I don't need to build or install anything.\n\nThe git status says the working directory is `/Users/praveensingh/Desktop/Projects/agentlab-ws`, on `main`, with a clean tree. The latest commit is `c708d87 Store audit app`."
+}

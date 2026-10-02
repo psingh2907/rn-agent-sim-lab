@@ -1,0 +1,79 @@
+{
+  "id": "agent-device-performance-2",
+  "tool": "agent-device",
+  "task": "performance",
+  "rep": 2,
+  "exitCode": 0,
+  "wallMs": 516806,
+  "timedOut": false,
+  "turns": 1,
+  "durationMs": 3369,
+  "costUsd": 0.6268825499999997,
+  "usage": {
+    "input_tokens": 4,
+    "cache_creation_input_tokens": 2443,
+    "cache_read_input_tokens": 48460,
+    "output_tokens": 157,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 2443,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "TodoWrite": 2,
+    "Bash": 26,
+    "Grep": 1,
+    "Read": 4,
+    "TaskOutput": 1
+  },
+  "toolCallCount": 34,
+  "toolOutputBytes": 33462,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "That notification is only the earlier `wait --connected` check, from before I set up the profiler, finishing. It needs no action.\n\nThe work is complete. The only change left in the repo is the `NotesFooter` extraction in `src/screens/ChecklistScreen.tsx`."
+}

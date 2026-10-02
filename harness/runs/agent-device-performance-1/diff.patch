@@ -1,0 +1,115 @@
+diff --git a/src/components/NotesInput.tsx b/src/components/NotesInput.tsx
+new file mode 100644
+index 0000000..8add646
+--- /dev/null
++++ b/src/components/NotesInput.tsx
+@@ -0,0 +1,33 @@
++import { useRef, useState } from 'react';
++import { Pressable, StyleSheet, Text, TextInput, View, type TextInputInstance } from 'react-native';
++
++// Owns the note text so typing re-renders only this component, not the whole
++// checklist screen and its list rows.
++export function NotesInput() {
++  const [note, setNote] = useState('');
++  const notes = useRef<TextInputInstance>(null);
++
++  return (
++    <View>
++      <TextInput
++        ref={notes}
++        testID="notes"
++        placeholder="Notes for the store manager"
++        style={styles.input}
++        multiline
++        value={note}
++        onChangeText={setNote}
++      />
++      <Text style={styles.count}>{note.length} / 500</Text>
++      <Pressable onPress={() => notes.current?.blur()} style={styles.done}>
++        <Text>Done</Text>
++      </Pressable>
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  count: { color: '#666', marginBottom: 8 },
++  input: { minHeight: 80, borderWidth: 1, borderRadius: 8, padding: 8, marginBottom: 8 },
++  done: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
++});
+diff --git a/src/lib/risk.ts b/src/lib/risk.ts
+index ffa4099..18015c4 100644
+--- a/src/lib/risk.ts
++++ b/src/lib/risk.ts
+@@ -5,15 +5,9 @@ const keywords = [
+   'door', 'heavy', 'damaged', 'security', 'tags', 'keys', 'pallet', 'oven', 'grease', 'toilet', 'soap',
+ ];
+ 
+-const SAMPLES = 200;
++// Compiled once; matches a keyword at the start of any word.
++const riskPattern = new RegExp(`\\b(?:${keywords.join('|')})`, 'i');
+ 
+ export function riskLevel(title: string): 'high' | 'normal' {
+-  // Average over several passes so a partial word match doesn't decide it.
+-  let hits = 0;
+-  for (let i = 0; i < SAMPLES; i++) {
+-    for (const word of keywords) {
+-      if (new RegExp(`\\b${word}`, 'i').test(title)) hits++;
+-    }
+-  }
+-  return hits / SAMPLES >= 1 ? 'high' : 'normal';
++  return riskPattern.test(title) ? 'high' : 'normal';
+ }
+diff --git a/src/screens/ChecklistScreen.tsx b/src/screens/ChecklistScreen.tsx
+index 528871b..20603b8 100644
+--- a/src/screens/ChecklistScreen.tsx
++++ b/src/screens/ChecklistScreen.tsx
+@@ -1,7 +1,8 @@
+-import { useEffect, useRef, useState } from 'react';
+-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputInstance } from 'react-native';
++import { useEffect, useState } from 'react';
++import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+ import { FlashList } from '@shopify/flash-list';
+ import { Header } from '../components/Header';
++import { NotesInput } from '../components/NotesInput';
+ import { PhotoModal } from '../components/PhotoModal';
+ import { QuestionRow } from '../components/QuestionRow';
+ import { checklist, type ChecklistItem } from '../lib/data';
+@@ -9,8 +10,6 @@ import { checklist, type ChecklistItem } from '../lib/data';
+ export function ChecklistScreen() {
+   const [items, setItems] = useState<ChecklistItem[]>([]);
+   const [photo, setPhoto] = useState<string | null>(null);
+-  const [note, setNote] = useState('');
+-  const notes = useRef<TextInputInstance>(null);
+ 
+   // Load the list once the JS thread is idle.
+   useEffect(() => {
+@@ -43,19 +42,7 @@ export function ChecklistScreen() {
+         }}
+         ListFooterComponent={
+           <ScrollView keyboardShouldPersistTaps="always" style={styles.footer}>
+-            <TextInput
+-              ref={notes}
+-              testID="notes"
+-              placeholder="Notes for the store manager"
+-              style={styles.input}
+-              multiline
+-              value={note}
+-              onChangeText={setNote}
+-            />
+-            <Text style={styles.count}>{note.length} / 500</Text>
+-            <Pressable onPress={() => notes.current?.blur()} style={styles.done}>
+-              <Text>Done</Text>
+-            </Pressable>
++            <NotesInput />
+           </ScrollView>
+         }
+       />
+@@ -69,7 +56,4 @@ const styles = StyleSheet.create({
+   section: { padding: 16, fontWeight: '700', backgroundColor: '#eee' },
+   photo: { padding: 16 },
+   footer: { padding: 16 },
+-  count: { color: '#666', marginBottom: 8 },
+-  input: { minHeight: 80, borderWidth: 1, borderRadius: 8, padding: 8, marginBottom: 8 },
+-  done: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
+ });

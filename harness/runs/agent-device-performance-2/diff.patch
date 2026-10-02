@@ -1,0 +1,63 @@
+diff --git a/src/screens/ChecklistScreen.tsx b/src/screens/ChecklistScreen.tsx
+index 528871b..ac6c6b1 100644
+--- a/src/screens/ChecklistScreen.tsx
++++ b/src/screens/ChecklistScreen.tsx
+@@ -6,11 +6,33 @@ import { PhotoModal } from '../components/PhotoModal';
+ import { QuestionRow } from '../components/QuestionRow';
+ import { checklist, type ChecklistItem } from '../lib/data';
+ 
++// Owns the note text so keystrokes re-render only this footer, not the whole checklist.
++function NotesFooter() {
++  const [note, setNote] = useState('');
++  const notes = useRef<TextInputInstance>(null);
++
++  return (
++    <ScrollView keyboardShouldPersistTaps="always" style={styles.footer}>
++      <TextInput
++        ref={notes}
++        testID="notes"
++        placeholder="Notes for the store manager"
++        style={styles.input}
++        multiline
++        value={note}
++        onChangeText={setNote}
++      />
++      <Text style={styles.count}>{note.length} / 500</Text>
++      <Pressable onPress={() => notes.current?.blur()} style={styles.done}>
++        <Text>Done</Text>
++      </Pressable>
++    </ScrollView>
++  );
++}
++
+ export function ChecklistScreen() {
+   const [items, setItems] = useState<ChecklistItem[]>([]);
+   const [photo, setPhoto] = useState<string | null>(null);
+-  const [note, setNote] = useState('');
+-  const notes = useRef<TextInputInstance>(null);
+ 
+   // Load the list once the JS thread is idle.
+   useEffect(() => {
+@@ -42,21 +64,7 @@ export function ChecklistScreen() {
+           return <QuestionRow item={item} onAnswer={answer} />;
+         }}
+         ListFooterComponent={
+-          <ScrollView keyboardShouldPersistTaps="always" style={styles.footer}>
+-            <TextInput
+-              ref={notes}
+-              testID="notes"
+-              placeholder="Notes for the store manager"
+-              style={styles.input}
+-              multiline
+-              value={note}
+-              onChangeText={setNote}
+-            />
+-            <Text style={styles.count}>{note.length} / 500</Text>
+-            <Pressable onPress={() => notes.current?.blur()} style={styles.done}>
+-              <Text>Done</Text>
+-            </Pressable>
+-          </ScrollView>
++          <NotesFooter />
+         }
+       />
+       <PhotoModal uri={photo} onClose={() => setPhoto(null)} />

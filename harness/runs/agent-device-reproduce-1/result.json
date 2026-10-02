@@ -1,0 +1,79 @@
+{
+  "id": "agent-device-reproduce-1",
+  "tool": "agent-device",
+  "task": "reproduce",
+  "rep": 1,
+  "exitCode": 0,
+  "wallMs": 104258,
+  "timedOut": false,
+  "turns": 15,
+  "durationMs": 101962,
+  "costUsd": 0.18687075,
+  "usage": {
+    "input_tokens": 18,
+    "cache_creation_input_tokens": 12043,
+    "cache_read_input_tokens": 238155,
+    "output_tokens": 3230,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 12043,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "TodoWrite": 3,
+    "Bash": 6,
+    "Grep": 1,
+    "Glob": 1,
+    "Read": 3
+  },
+  "toolCallCount": 14,
+  "toolOutputBytes": 18273,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "I reproduced the bug. Every row of the same type shares one local answer state, and the list reuses those rows as you scroll. I didn't change any code.\n\n**Steps (iPhone 17 simulator)**\n1. Open the app. The header reads \"0 of 48 answered\" and nothing is selected.\n2. Tap `yes for Fire exit clear of obstructions`, the first question. It shows `[selected]` and the header changes to \"1 of 48 answered\".\n3. Scroll down three times, taking a snapshot after each scroll.\n   - After the first scroll nothing is selected in view.\n   - After the second and third scrolls, `yes for Entrance mats clean` shows `[selected]`. I never touched that question. The last snapshot also had `yes for Trolley bay tidy` unselected, and the header still read \"1 of 48 answered\".\n4. I scrolled back to the top and ran a filtered snapshot, which printed only the header. No `[selected]` row appeared, so the Fire exit \"yes\" may now look unselected while the header still says 1 answered. I filtered the output and didn't view the whole screen, so I haven't confirmed that.\n\nThe screenshot is at `/tmp/bug.png`.\n\n**Root cause**\n- `src/components/QuestionRow.tsx:15` has `const [answer, setAnswer] = useState(item.answer);`. This copies the answer into local state once, when the row first mounts, and never syncs it with the `item` prop afterwards.\n- The pill highlight (`QuestionRow.tsx:27` and `:32`) reads that local `answer`, not `item.answer`.\n- `src/screens/ChecklistScreen.tsx:30-34` renders the list with FlashList, which recycles row components instead of unmounting them. `getItemType={item => item.kind}` at line 33 puts every question row in one recycling pool.\n- When you scroll, the row component that showed \"Fire exit\" (with its local `answer = 'yes'`) is reused for a new question such as \"Entrance mats clean\". That component receives a new `item` prop but keeps its old local `answer`, so it still highlights \"yes\".\n- The parent's data is correct, which is why the header count stays at 1. Only the row's display state is wrong. The answer shown for a question can come from whichever question the row was last used for.\n\nThe \"highlight instantly\" comment at `QuestionRow.tsx:14` suggests the local copy was added for responsiveness. That copy is the cause. The row should show `item.answer`, which the parent already updates."
+}

@@ -1,0 +1,79 @@
+{
+  "id": "agent-device-fix-verify-2",
+  "tool": "agent-device",
+  "task": "fix-verify",
+  "rep": 2,
+  "exitCode": 0,
+  "wallMs": 111155,
+  "timedOut": false,
+  "turns": 19,
+  "durationMs": 108037,
+  "costUsd": 0.2680147,
+  "usage": {
+    "input_tokens": 30,
+    "cache_creation_input_tokens": 10400,
+    "cache_read_input_tokens": 451919,
+    "output_tokens": 3143,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 10400,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "TodoWrite": 3,
+    "Grep": 1,
+    "Read": 3,
+    "Edit": 1,
+    "Bash": 10
+  },
+  "toolCallCount": 18,
+  "toolOutputBytes": 249326,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "Long questions now show both the yes and no buttons, and short rows look the same as before.\n\n**Change:** in `src/components/QuestionRow.tsx`, I added `flex: 1` to the `question` text style. The title had no flex or shrink setting, so a long title took the whole row and pushed the buttons off-screen. With `flex: 1` the title wraps in the space left over and the buttons stay at the right edge.\n\n**Checked on the iPhone 17 simulator, after reloading with the change:**\n- **Long rows in Cleaning:** \"Are the customer toilets cleaned…\" and \"Is the area behind the bakery ovens…\" both wrap to 3–4 lines, with yes and no visible at the right.\n- **Short rows:** \"Floors clean\", \"Bins emptied\", \"Trolley bay tidy\" and \"Entrance mats clean\" are on a single line, with the buttons aligned in the same column as the long rows. The red \"!\" markers still show.\n- **Taps:** I tapped yes on the toilets row and no on the bakery-oven row. Each button highlighted, and the counter went from \"0 of 48\" to \"2 of 48 answered\".\n\nI did not capture a \"before\" screenshot, so the bug itself is inferred from the code and not seen in the app. I only looked at the Cleaning section and parts of Safety, Food safety and Security, not all 48 rows."
+}

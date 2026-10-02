@@ -1,0 +1,78 @@
+{
+  "id": "agent-device-fix-verify-1",
+  "tool": "agent-device",
+  "task": "fix-verify",
+  "rep": 1,
+  "exitCode": 0,
+  "wallMs": 99003,
+  "timedOut": false,
+  "turns": 15,
+  "durationMs": 96086,
+  "costUsd": 0.19950774999999998,
+  "usage": {
+    "input_tokens": 26,
+    "cache_creation_input_tokens": 8423,
+    "cache_read_input_tokens": 355995,
+    "output_tokens": 2570,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 8423,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "Grep": 1,
+    "Bash": 8,
+    "Read": 4,
+    "Edit": 1
+  },
+  "toolCallCount": 14,
+  "toolOutputBytes": 240923,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "Long-question rows now show both the yes and no buttons, and short rows look the same as before.\n\n**Cause:** in `QuestionRow`, the question text had no flex constraints inside a horizontal row. A long title took all the width and pushed the yes/no pills off the right edge.\n\n**Change:** one line in `src/components/QuestionRow.tsx`, in the `question` style:\n```diff\n-  question: { fontSize: 15 },\n+  question: { flex: 1, fontSize: 15 },\n```\nThe title now takes the remaining width and wraps, and the pills keep their natural size.\n\n**Checked in the running app on the iPhone 17 simulator** (Metro reloaded the change, no rebuild):\n- **Long rows in Cleaning:** the toilets row (\"Are the customer toilets cleaned, restocked with soap…\") and the bakery ovens row (\"Is the area behind the bakery ovens…\") wrap onto 3 lines. Both `yes` and `no` are visible and aligned on the right. Both rows also show the red `!` risk marker.\n- **Short rows:** \"Floors clean\", \"Bins emptied\", \"Trolley bay tidy\" and the Food safety rows (e.g. \"Hand wash station stocked\") look right. The `!` marker shows only on the high-risk rows, and the pills line up in the same column.\n- **Accessibility tree:** the long rows expose both `yes for …` and `no for …` buttons.\n\nI didn't tap any buttons to test answering, because the change only affects layout."
+}

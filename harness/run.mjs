@@ -29,6 +29,13 @@ if (!['argent', 'agent-device'].includes(tool) || !tasks.tasks[task] || !rep) {
   process.exit(1);
 }
 const id = `${tool}-${task}-${rep}`;
+// Stopped after round 2 at the user's request: every scored run so far was
+// 3/3, so a third round would only firm up timings.
+const MAX_REP = 2;
+if (task !== 'probe' && Number(rep) > MAX_REP) {
+  console.log(`${id}: skipped (stopped after round ${MAX_REP})`);
+  process.exit(0);
+}
 const out = join(H, 'runs', id);
 if (existsSync(join(out, 'result.json'))) {
   console.log(`${id}: already done, skipping`);

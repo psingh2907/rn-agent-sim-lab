@@ -1,0 +1,29 @@
+{
+  "tool": "agent-device",
+  "task": "performance",
+  "rep": "2",
+  "model": "claude-sonnet-5-5",
+  "prompt": "The app (bundle id org.reactjs.native.example.RNUpgradeLab) is installed on the booted iPhone 17 simulator (UDID 22AD1763-1F47-4D6F-B93D-740B32B0D940). Metro is already running on port 8081 from this directory, so JavaScript changes reload without rebuilding the app. You don't need to build or install anything.\n\nBug report from a store auditor: \"Typing in the 'Notes for the store manager' box at the bottom of the audit feels laggy.\"\n\nUse the running app on the simulator to find out why, with evidence such as render counts or a profile. Then fix it, and show the same kind of evidence after the fix. Report the cause, the fix, and the before and after numbers.",
+  "args": [
+    "-p",
+    "--model",
+    "claude-sonnet-5-5",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--setting-sources",
+    "project",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/mcp.json",
+    "--plugin-dir",
+    "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin",
+    "--append-system-prompt",
+    "# agent-device\n\nUse agent-device only for app/device automation tasks.\nFor a normal app-driving task, start immediately. Do not probe first with `--help`, `--version`, `devices`, `appstate`, `snapshot`, or `screenshot`; open the requested app in the foreground and continue from its initial interactive snapshot.\nFor TV, Fire TV, or Vega OS tasks, read `agent-device help tv`.\nFor exploratory QA, read `agent-device help dogfood`.\nFor logs, network, audio, traces, or runtime failures, read `agent-device help debugging`.\nFor React Native component trees, props/state/hooks, slow renders, or rerenders, read `agent-device help react-devtools`.\nFor React Native JavaScript heap growth, heap snapshots, or retained-object leaks, read `agent-device help cdp`.\nFor React Native apps, overlays, Metro/Fast Refresh blockers, and routing to React DevTools or debugging evidence, read `agent-device help react-native`.\n\nUse the CLI in the integrated terminal.\nIf `agent-device` is not on PATH but the user installed it globally in another shell, resolve the absolute binary path instead of using `npx -y agent-device@latest`.\nPrefer `open -> snapshot -i -> act -> re-snapshot -> verify -> close` where supported; otherwise follow target-specific help.\nKeep mutating commands against one session serial.\n",
+    "--permission-mode",
+    "dontAsk",
+    "--allowedTools",
+    "Bash Read Edit Write Glob Grep Task TodoWrite mcp__argent",
+    "--no-session-persistence"
+  ]
+}

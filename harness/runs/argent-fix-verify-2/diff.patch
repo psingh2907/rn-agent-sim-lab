@@ -1,0 +1,13 @@
+diff --git a/src/components/QuestionRow.tsx b/src/components/QuestionRow.tsx
+index 9ac75f1..6539452 100644
+--- a/src/components/QuestionRow.tsx
++++ b/src/components/QuestionRow.tsx
+@@ -41,7 +41,7 @@ export function QuestionRow({ item, onAnswer }: Props) {
+ const styles = StyleSheet.create({
+   row: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16 },
+   risk: { color: '#c00', fontWeight: '700' },
+-  question: { fontSize: 15 },
++  question: { flexShrink: 1, fontSize: 15 },
+   pill: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
+   pillOn: { backgroundColor: '#cde' },
+ });

@@ -1,0 +1,31 @@
+argent-reproduce-1: running (timeout 25 min)
+argent-reproduce-1: done in 146 s, 32 tool calls, 2469301 bytes of tool output, exit 0
+agent-device-reproduce-1: running (timeout 25 min)
+agent-device-reproduce-1: done in 104 s, 14 tool calls, 18273 bytes of tool output, exit 0
+argent-fix-verify-1: running (timeout 25 min)
+argent-fix-verify-1: done in 121 s, 36 tool calls, 2849454 bytes of tool output, exit 0
+agent-device-fix-verify-1: running (timeout 25 min)
+agent-device-fix-verify-1: done in 99 s, 14 tool calls, 240923 bytes of tool output, exit 0
+argent-performance-1: running (timeout 25 min)
+argent-performance-1: done in 195 s, 58 tool calls, 2444242 bytes of tool output, exit 0
+agent-device-performance-1: running (timeout 25 min)
+agent-device-performance-1: done in 296 s, 53 tool calls, 57589 bytes of tool output, exit 0
+agent-device-reproduce-2: running (timeout 25 min)
+agent-device-reproduce-2: done in 83 s, 15 tool calls, 213755 bytes of tool output, exit 0
+argent-reproduce-2: running (timeout 25 min)
+argent-reproduce-2: done in 129 s, 32 tool calls, 1864584 bytes of tool output, exit 0
+agent-device-fix-verify-2: running (timeout 25 min)
+agent-device-fix-verify-2: done in 111 s, 18 tool calls, 249326 bytes of tool output, exit 0
+argent-fix-verify-2: running (timeout 25 min)
+argent-fix-verify-2: done in 102 s, 29 tool calls, 1413456 bytes of tool output, exit 0
+agent-device-performance-2: running (timeout 25 min)
+agent-device-performance-2: done in 517 s, 34 tool calls, 33462 bytes of tool output, exit 0
+argent-performance-2: running (timeout 25 min)
+argent-performance-2: done in 122 s, 44 tool calls, 1471038 bytes of tool output, exit 1
+argent-reproduce-3: skipped (stopped after round 2)
+agent-device-reproduce-3: skipped (stopped after round 2)
+argent-fix-verify-3: skipped (stopped after round 2)
+agent-device-fix-verify-3: skipped (stopped after round 2)
+argent-performance-3: skipped (stopped after round 2)
+agent-device-performance-3: skipped (stopped after round 2)
+ALL RUNS FINISHED

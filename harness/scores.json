@@ -1,0 +1,107 @@
+{
+  "argent-reproduce-1": {
+    "points": 3,
+    "criteria": [
+      "reproduced",
+      "cause",
+      "no-changes"
+    ],
+    "note": "saw 2 wrong rows via screenshots/tree; read code early"
+  },
+  "agent-device-reproduce-1": {
+    "points": 3,
+    "criteria": [
+      "reproduced",
+      "cause",
+      "no-changes"
+    ],
+    "note": "snapshot text showed [selected] on untouched row; first snapshot said AX unavailable (bridge preparing) then worked"
+  },
+  "argent-fix-verify-1": {
+    "points": 3,
+    "criteria": [
+      "fix",
+      "long-row-verified",
+      "short-row-checked"
+    ],
+    "note": "flexShrink:1; tree before had no long-row buttons, after had all four; also spotted the recycled-row bug unprompted"
+  },
+  "agent-device-fix-verify-1": {
+    "points": 3,
+    "criteria": [
+      "fix",
+      "long-row-verified",
+      "short-row-checked"
+    ],
+    "note": "flex:1; edited before looking at the app (never saw the bug); verified after via snapshot + 2 screenshots"
+  },
+  "argent-performance-1": {
+    "points": 3,
+    "criteria": [
+      "cause",
+      "measured",
+      "fix"
+    ],
+    "note": "React profiler + CPU samples: 162 QuestionRow renders, 155-177 ms commits per keystroke -> 0 rows, all <16 ms; NotesFooter component"
+  },
+  "agent-device-performance-1": {
+    "points": 3,
+    "criteria": [
+      "cause",
+      "measured",
+      "fix"
+    ],
+    "note": "React DevTools profile: 396 QuestionRow renders, ChecklistScreen 153 ms avg per keystroke -> NotesInput 0.9 ms; fixed both causes (state + precompiled regex, equivalence-checked); had to install agent-react-devtools + init (patches index.js/metro.config) on RN 0.87, then reverted"
+  },
+  "agent-device-reproduce-2": {
+    "points": 3,
+    "criteria": [
+      "reproduced",
+      "cause",
+      "no-changes"
+    ],
+    "note": "[selected] in snapshot on Entrance mats clean and Break room clean; needed 2 retries while bundle loaded"
+  },
+  "argent-reproduce-2": {
+    "points": 3,
+    "criteria": [
+      "reproduced",
+      "cause",
+      "no-changes"
+    ],
+    "note": "saw Break room clean yes in screenshots; noted selected state is not in Argent describe tree"
+  },
+  "agent-device-fix-verify-2": {
+    "points": 3,
+    "criteria": [
+      "fix",
+      "long-row-verified",
+      "short-row-checked"
+    ],
+    "note": "flex:1; edited before looking at the app again; snapshot after fix shows all 4 long-row buttons + short rows; tapped both long rows"
+  },
+  "argent-fix-verify-2": {
+    "points": 3,
+    "criteria": [
+      "fix",
+      "long-row-verified",
+      "short-row-checked"
+    ],
+    "note": "flexShrink:1; saw the bug first (long text, no buttons), after fix tree has all 4 long-row buttons + short rows; one swipe with a mistyped UDID"
+  },
+  "agent-device-performance-2": {
+    "points": 3,
+    "criteria": [
+      "cause",
+      "measured",
+      "fix"
+    ],
+    "note": "329 components / ~145 ms per keystroke -> 12 / ~1 ms; NotesFooter; ~2 min lost to a hung react-devtools wait plus agent-react-devtools setup (npm install --save-dev, reverted); final message was a reply to a late background-task notice, real report is the previous message"
+  },
+  "argent-performance-2": {
+    "points": null,
+    "aborted": true,
+    "criteria": [],
+    "note": "ABORTED at 122 s: the Claude account hit its usage limit (resets 1:50pm). Had profiled (before) and applied a fix (memo rows + faster riskLevel + screen changes); no after-measurement or report. Excluded from totals."
+  }
+}

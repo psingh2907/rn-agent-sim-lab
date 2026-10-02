@@ -1,0 +1,80 @@
+{
+  "id": "agent-device-performance-1",
+  "tool": "agent-device",
+  "task": "performance",
+  "rep": 1,
+  "exitCode": 0,
+  "wallMs": 296380,
+  "timedOut": false,
+  "turns": 54,
+  "durationMs": 293341,
+  "costUsd": 0.9866563,
+  "usage": {
+    "input_tokens": 68,
+    "cache_creation_input_tokens": 42386,
+    "cache_read_input_tokens": 1738166,
+    "output_tokens": 15171,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 42386,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "TodoWrite": 5,
+    "Bash": 28,
+    "Glob": 2,
+    "Read": 9,
+    "Write": 1,
+    "Edit": 8
+  },
+  "toolCallCount": 53,
+  "toolOutputBytes": 57589,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "Typing in the notes box is no longer laggy. Each keystroke now renders only the notes component, in about 1 ms instead of about 153 ms.\n\n## Cause\n\nTwo problems stacked up:\n\n1. **State in the wrong place.** The notes text lived in `ChecklistScreen` (`useState('')`). Every keystroke re-rendered the whole screen, `FlashList` and every visible `QuestionRow`. `ChecklistScreen` renders each time because its `note` state changed. The rows re-render because the screen passes them a new `onAnswer` function on every render.\n2. **Expensive work in every row.** `QuestionRow` calls `riskLevel()` on each render, and `riskLevel` (`src/lib/risk.ts`) built 200 passes × 31 `new RegExp(...)` objects per call. That cost about 8 ms per row.\n\n## Fix\n\n- New `src/components/NotesInput.tsx` owns the note text, the character counter and the Done button. `ChecklistScreen` now just renders `<NotesInput />` in the list footer.\n- `riskLevel` now uses one precompiled regex. The old `hits / 200 >= 1` check only meant \"some keyword matched\". On all 48 checklist titles the new version gives the same result as the old one (25 high, 0 differences).\n\n## Before and after\n\nI used the React DevTools profiler while typing the same 22 characters at the same scroll position.\n\n| | Before | After |\n|---|---|---|\n| Commits | 44 | 22 |\n| Total render time | 3,393 ms | 19 ms |\n| `ChecklistScreen` renders | 22, avg 153.5 ms (max 240 ms) | 0 |\n| `QuestionRow` renders | 396 (18 rows × 22), avg 8.1 ms | 0 |\n| `FlashList` renders | 22, avg 152.6 ms | 0 |\n| `Header` (image and `StatusBar`) renders | 22 | 0 |\n| `NotesInput` renders | n/a | 22, avg 0.9 ms |\n\nI also checked that typing works (\"22 / 500\" counter) and that answering a question still updates the header (\"1 of 48 answered\").\n\n## Notes\n\n- **Temporary setup, reverted.** RN 0.87.1 needs `agent-react-devtools` before DevTools can attach. I installed it with `--no-save` and ran `init`. I then ran `uninit`, removed the package, and restored `index.js` and `metro.config.js`. The diff now contains only the fix: `risk.ts`, `ChecklistScreen.tsx` and the new `NotesInput.tsx`.\n- **Not done: stable `onAnswer`.** Wrapping `QuestionRow` in `memo` and making `onAnswer` stable would also stop rows re-rendering when you answer a question. That wasn't part of this bug, so I left it.\n- **Baseline unavailable.** The baseline and after profiles (`/tmp/before.json`, `/tmp/after.json`) can be re-diffed with `agent-device react-devtools profile diff`."
+}

@@ -1,0 +1,78 @@
+{
+  "id": "agent-device-reproduce-2",
+  "tool": "agent-device",
+  "task": "reproduce",
+  "rep": 2,
+  "exitCode": 0,
+  "wallMs": 82659,
+  "timedOut": false,
+  "turns": 16,
+  "durationMs": 79886,
+  "costUsd": 0.18641270000000004,
+  "usage": {
+    "input_tokens": 24,
+    "cache_creation_input_tokens": 8606,
+    "cache_read_input_tokens": 297044,
+    "output_tokens": 2862,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 8606,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "toolCalls": {
+    "TodoWrite": 2,
+    "Bash": 9,
+    "Read": 3,
+    "Grep": 1
+  },
+  "toolCallCount": 15,
+  "toolOutputBytes": 213755,
+  "typecheck": "pass",
+  "loaded": {
+    "tools": [
+      "Task",
+      "TaskOutput",
+      "Bash",
+      "Glob",
+      "Grep",
+      "ExitPlanMode",
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebFetch",
+      "TodoWrite",
+      "WebSearch",
+      "TaskStop",
+      "AskUserQuestion",
+      "Skill",
+      "EnterPlanMode",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "skills": [
+      "keybindings-help",
+      "debug",
+      "agent-device-arm:android-emulator",
+      "agent-device-arm:agent-device",
+      "agent-device-arm:ios-simulator",
+      "agent-device-arm:dogfood"
+    ],
+    "plugins": [
+      {
+        "name": "agent-device-arm",
+        "path": "/Users/praveensingh/Desktop/Projects/rn-agent-sim-lab/harness/arms/agent-device/plugin"
+      }
+    ],
+    "model": "claude-sonnet-5-5"
+  },
+  "report": "I reproduced the bug. Untouched questions showed \"yes\" while the app's own counter stayed at \"1 of 48 answered\". The cause is local state in `QuestionRow` that survives FlashList's row recycling. I changed no code.\n\n## Steps\n1. Open the app and wait for the Store audit screen to load. It reads \"0 of 48 answered\" and nothing is selected.\n2. Tap **yes for Fire exit clear of obstructions**. That button becomes `[selected]` and the header reads \"1 of 48 answered\".\n3. Scroll down the list a few times, taking a snapshot after each scroll.\n\n## Evidence\n- The first small scroll showed no extra selections.\n- After further scrolling, questions I never touched appeared with `yes` selected:\n  - **Entrance mats clean**: `yes for Entrance mats clean [selected]`\n  - **Break room clean**: `yes for Break room clean [selected]`\n- The header stayed at **\"1 of 48 answered\"** in every snapshot. The real data has exactly one answer, so the highlighted pills are display-only. The auditor sees \"yes\" on questions the app has not recorded.\n- Which rows show the stale \"yes\" depends on scroll position, which is typical of recycled rows.\n\n## Root cause\n`src/components/QuestionRow.tsx:15` copies the answer into local state:\n```tsx\nconst [answer, setAnswer] = useState(item.answer);\n```\nThe pill highlight is then read from that local `answer` (`:27` and `:32`) rather than from `item.answer`.\n\n`src/screens/ChecklistScreen.tsx:30-43` renders the rows with `FlashList`, which recycles row components. When a row scrolls off screen, FlashList reuses the same `QuestionRow` instance for a different question that scrolls in. `getItemType` is `item.kind` (`:33`), so every question row shares one recycling pool. `useState(item.answer)` only uses its initial value on the first mount. A recycled instance receives a new `item` prop but keeps the old local `answer` (\"yes\", set by the Fire exit tap), so it shows \"yes\" for the new question.\n\nThe source of truth, `items` in `ChecklistScreen`, is correct. That is why the counter stays at 1.\n\nThe comment at `QuestionRow.tsx:14` (\"Local copy so the pill highlights instantly\") explains why the local copy was added. It is the source of the bug."
+}
