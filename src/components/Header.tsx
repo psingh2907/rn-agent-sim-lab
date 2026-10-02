@@ -20,7 +20,7 @@ export function Header({ title, subtitle, style, ...rest }: HeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  banner: { paddingTop: 56, paddingHorizontal: 20, paddingBottom: 20, overflow: 'hidden' },
+  banner: { paddingTop: 56, paddingHorizontal: 20, paddingBottom: 20, overflow: 'hidden', backgroundColor: '#345' },
   title: { fontSize: 28, fontWeight: '700', color: 'white' },
   subtitle: { marginTop: 4, color: 'white', opacity: 0.85 },
 });
