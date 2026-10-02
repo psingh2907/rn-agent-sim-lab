@@ -16,7 +16,8 @@ const H = new URL('.', import.meta.url).pathname;
 const WS = join(homedir(), 'Desktop/Projects/agentlab-ws');
 const UDID = '22AD1763-1F47-4D6F-B93D-740B32B0D940';
 const BUNDLE = 'org.reactjs.native.example.RNUpgradeLab';
-const MODEL = 'sonnet';
+// Pinned: on Claude Code 2.1.42 the 'sonnet' alias resolves to an older model.
+const MODEL = 'claude-sonnet-5-5';
 const TIMEOUT_MS = 25 * 60 * 1000;
 
 const tasks = JSON.parse(readFileSync(join(H, 'tasks.json'), 'utf8'));
@@ -69,6 +70,10 @@ const pathParts = [shadow];
 if (tool === 'agent-device') pathParts.push(join(H, 'tools/node_modules/.bin'));
 const env = { ...process.env, PATH: `${pathParts.join(':')}:${process.env.PATH}` };
 delete env.CLAUDECODE;
+// --setting-sources keeps out user settings but not ~/.claude/CLAUDE.md, rules
+// or memory, which on this machine include Argent's rules. Turn those off too.
+env.CLAUDE_CODE_DISABLE_CLAUDE_MDS = '1';
+env.CLAUDE_CODE_DISABLE_AUTO_MEMORY = '1';
 
 const prompt = `${tasks.context}\n\n${tasks.tasks[task]}`;
 const args = [
