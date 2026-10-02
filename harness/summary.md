@@ -1,4 +1,3 @@
-excluded: argent-performance-2 (ABORTED at 122 s: the Claude account hit its usage limit (resets 1:50pm). Had profiled (before) and applied a fix (memo rows + faster riskLevel + screen changes); no after-measurement or report. Excluded from totals.)
 
 ## reproduce
 | tool | runs | score (of 3 each) | median wall time | median tool calls | median text output | median screenshots | median tokens | total cost |
@@ -15,13 +14,13 @@ excluded: argent-performance-2 (ABORTED at 122 s: the Claude account hit its usa
 ## performance
 | tool | runs | score (of 3 each) | median wall time | median tool calls | median text output | median screenshots | median tokens | total cost |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| argent | 1 | 3 / 3 | 195 s | 58 | 110 KB | 13 | 3819k | $1.85 |
+| argent | 2 | 6 / 6 | 212 s | 62 | 104 KB | 11 | 3870k | $4.01 |
 | agent-device | 2 | 6 / 6 | 407 s | 43.5 | 43 KB | 0 | 923k | $1.61 |
 
 ## all
 | tool | runs | score (of 3 each) | median wall time | median tool calls | median text output | median screenshots | median tokens | total cost |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| argent | 5 | 15 / 15 | 129 s | 32 | 58 KB | 12 | 1585k | $5.43 |
+| argent | 6 | 18 / 18 | 138 s | 34 | 59 KB | 11 | 1843k | $7.59 |
 | agent-device | 6 | 18 / 18 | 108 s | 16.5 | 17 KB | 0.5 | 338k | $2.45 |
 
 ## Per run
@@ -34,5 +33,6 @@ agent-device-reproduce-2: 3/3 [reproduced cause no-changes], 83 s, 15 calls, 14 
 argent-fix-verify-1: 3/3 [fix long-row-verified short-row-checked], 121 s, 36 calls, 51 KB text, 14 images (flexShrink:1; tree before had no long-row buttons, after had all four; also spotted the recycled-row bug unprompted)
 argent-fix-verify-2: 3/3 [fix long-row-verified short-row-checked], 102 s, 29 calls, 39 KB text, 8 images (flexShrink:1; saw the bug first (long text, no buttons), after fix tree has all 4 long-row buttons + short rows; one swipe with a mistyped UDID)
 argent-performance-1: 3/3 [cause measured fix], 195 s, 58 calls, 110 KB text, 13 images (React profiler + CPU samples: 162 QuestionRow renders, 155-177 ms commits per keystroke -> 0 rows, all <16 ms; NotesFooter component)
+argent-performance-2: 3/3 [cause measured fix], 229 s, 66 calls, 98 KB text, 9 images (re-run after the usage limit reset: 9 slow commits of 157-179 ms (162 QuestionRow renders, regExpConstructor 943 ms) -> 0 slow commits, RegExp 0 ms; NotesField component)
 argent-reproduce-1: 3/3 [reproduced cause no-changes], 146 s, 32 calls, 58 KB text, 12 images (saw 2 wrong rows via screenshots/tree; read code early)
 argent-reproduce-2: 3/3 [reproduced cause no-changes], 129 s, 32 calls, 60 KB text, 10 images (saw Break room clean yes in screenshots; noted selected state is not in Argent describe tree)

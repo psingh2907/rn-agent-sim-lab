@@ -3,24 +3,24 @@
   "tool": "argent",
   "task": "performance",
   "rep": 2,
-  "exitCode": 1,
-  "wallMs": 121966,
+  "exitCode": 0,
+  "wallMs": 228955,
   "timedOut": false,
-  "turns": 47,
-  "durationMs": 118996,
-  "costUsd": 1.01047965,
+  "turns": 69,
+  "durationMs": 225835,
+  "costUsd": 2.1534913000000007,
   "usage": {
-    "input_tokens": 56,
-    "cache_creation_input_tokens": 85057,
-    "cache_read_input_tokens": 1794733,
-    "output_tokens": 10005,
+    "input_tokens": 84,
+    "cache_creation_input_tokens": 199268,
+    "cache_read_input_tokens": 3702091,
+    "output_tokens": 18993,
     "server_tool_use": {
       "web_search_requests": 0,
       "web_fetch_requests": 0
     },
     "service_tier": "standard",
     "cache_creation": {
-      "ephemeral_1h_input_tokens": 85057,
+      "ephemeral_1h_input_tokens": 199268,
       "ephemeral_5m_input_tokens": 0
     },
     "inference_geo": "",
@@ -28,29 +28,29 @@
     "speed": "standard"
   },
   "toolCalls": {
-    "TodoWrite": 3,
+    "TodoWrite": 6,
     "Skill": 2,
-    "ToolSearch": 6,
-    "Grep": 1,
-    "Glob": 1,
-    "Read": 4,
+    "Glob": 2,
+    "Read": 8,
+    "ToolSearch": 16,
     "mcp__argent__debugger-connect": 3,
-    "mcp__argent__describe": 2,
     "mcp__argent__launch-app": 1,
     "mcp__argent__await-ui-element": 2,
-    "mcp__argent__run-sequence": 3,
-    "mcp__argent__gesture-tap": 1,
-    "mcp__argent__react-profiler-start": 1,
-    "mcp__argent__keyboard": 1,
-    "mcp__argent__react-profiler-stop": 1,
-    "mcp__argent__react-profiler-analyze": 1,
-    "mcp__argent__profiler-cpu-query": 1,
-    "Edit": 8,
-    "Bash": 1,
-    "mcp__argent__restart-app": 1
+    "mcp__argent__describe": 1,
+    "mcp__argent__run-sequence": 2,
+    "mcp__argent__gesture-tap": 2,
+    "mcp__argent__react-profiler-start": 2,
+    "mcp__argent__keyboard": 2,
+    "mcp__argent__react-profiler-stop": 2,
+    "mcp__argent__react-profiler-analyze": 2,
+    "Edit": 2,
+    "mcp__argent__restart-app": 1,
+    "mcp__argent__profiler-commit-query": 3,
+    "Bash": 6,
+    "mcp__argent__stop-all-simulator-servers": 1
   },
-  "toolCallCount": 44,
-  "toolOutputBytes": 1471038,
+  "toolCallCount": 66,
+  "toolOutputBytes": 1510631,
   "typecheck": "pass",
   "loaded": {
     "tools": [
@@ -186,5 +186,5 @@
     ],
     "model": "claude-sonnet-5-5"
   },
-  "report": "You're out of extra usage · resets 1:50pm (Asia/Calcutta)"
+  "report": "Typing in the notes box was laggy because every keystroke re-rendered the whole checklist. I moved the note state into its own footer component, and after that none of the 19 keystrokes produced a slow commit (React commit over 16 ms).\n\n## Cause\n\nThe `note` state lived in `ChecklistScreen`, which is the parent of the list. Each keystroke re-rendered the screen and every visible `QuestionRow`. Each row also recomputes `riskLevel()` on every render. That function builds `new RegExp` 200 × 30 times per row, so the re-render was expensive.\n\n## Fix\n\nThe change is in `src/screens/ChecklistScreen.tsx`. I added a `NotesField` component that owns `note` and the input ref, and the list footer is now `<NotesField />`. Typing now re-renders only that component. Layout, styles and props are unchanged, and the Done button's blur logic moved with it. `tsc` and `eslint` printed no errors, but I didn't capture their exit codes. I did not test the Done button or any other part of the app after the refactor.\n\n## Before and after\n\nI profiled the same scenario both times on a fresh app launch (dev build, simulator). In each run I scrolled to the bottom, tapped the notes box and typed \"hello store manager\" (19 keystrokes). The counter read 19 / 500 in both runs.\n\n| | Before | After |\n|---|---|---|\n| Slow commits (≥16 ms) | 9, each 157–179 ms (about 1,464 ms total) | 0 (all under 16 ms) |\n| `QuestionRow` renders | 162 (9 commits × 18 rows), 1,229 ms | no slow commits, so none of the 157–179 ms row renders seen before |\n| Fiber renders captured | 2,979 | 216 |\n| JS thread busy time in the profile window | 1,630 ms | 76 ms |\n| `new RegExp` time (`regExpConstructor`) | 943 ms | 0 ms |\n| `riskLevel` self time | 77 ms | 0 ms |\n\n- **Dev-build caveat:** these are dev-build timings, which the profiler says run roughly 3× slower than production. The ratios matter more than the absolute numbers.\n- **After-run detail:** the profiler drops per-commit detail when nothing is slow, so I have no per-component render counts for the after run. That is why the `QuestionRow` entry above is inferred. The fiber-render total, the JS busy time and the absence of `riskLevel` and `RegExp` samples in the CPU profile back it up.\n- **Keystroke batching:** in the baseline, the 19 keystrokes coalesced into 9 slow commits because each took about 160 ms. A user typing slower would feel one ~160 ms stall per keystroke.\n\n## Other finding, not fixed\n\n`riskLevel` is wasteful in its own right. The 200-iteration loop is redundant, because `hits / 200 >= 1` is the same as \"any keyword matches\". It also builds a new regex per keyword per render. Tapping yes or no on a question still re-renders all visible rows, so it still costs time there. That is outside this bug report, so I left it alone. Precompiling the regexes once, or caching the result per title, would remove the cost. I can make that change if you want.\n\nI left Metro running. I stopped the simulator-server, debugger and accessibility services I started for this session. The one remaining ID I passed, `3c6dddc3…`, matched nothing because it is Metro's internal handle."
 }

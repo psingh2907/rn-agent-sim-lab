@@ -29,3 +29,5 @@ agent-device-fix-verify-3: skipped (stopped after round 2)
 argent-performance-3: skipped (stopped after round 2)
 agent-device-performance-3: skipped (stopped after round 2)
 ALL RUNS FINISHED
+argent-performance-2: running (timeout 25 min)
+argent-performance-2: done in 229 s, 66 tool calls, 1510631 bytes of tool output, exit 0

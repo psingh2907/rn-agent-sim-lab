@@ -1,76 +1,13 @@
-diff --git a/src/components/QuestionRow.tsx b/src/components/QuestionRow.tsx
-index 9ac75f1..fe66061 100644
---- a/src/components/QuestionRow.tsx
-+++ b/src/components/QuestionRow.tsx
-@@ -1,4 +1,4 @@
--import { useState } from 'react';
-+import { memo, useState } from 'react';
- import { Pressable, StyleSheet, Text, View } from 'react-native';
- import type { ChecklistItem } from '../lib/data';
- import { riskLevel } from '../lib/risk';
-@@ -10,7 +10,7 @@ type Props = {
-   onAnswer: (id: string, value: 'yes' | 'no') => void;
- };
- 
--export function QuestionRow({ item, onAnswer }: Props) {
-+export const QuestionRow = memo(function QuestionRow({ item, onAnswer }: Props) {
-   // Local copy so the pill highlights instantly, before the list re-renders.
-   const [answer, setAnswer] = useState(item.answer);
-   const risk = riskLevel(item.title);
-@@ -36,7 +36,7 @@ export function QuestionRow({ item, onAnswer }: Props) {
-       ))}
-     </View>
-   );
--}
-+});
- 
- const styles = StyleSheet.create({
-   row: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16 },
-diff --git a/src/lib/risk.ts b/src/lib/risk.ts
-index ffa4099..2f5606d 100644
---- a/src/lib/risk.ts
-+++ b/src/lib/risk.ts
-@@ -5,15 +5,16 @@ const keywords = [
-   'door', 'heavy', 'damaged', 'security', 'tags', 'keys', 'pallet', 'oven', 'grease', 'toilet', 'soap',
- ];
- 
--const SAMPLES = 200;
-+// Built once: a title is high risk if any keyword starts a word in it.
-+const riskPattern = new RegExp(`\\b(?:${keywords.join('|')})`, 'i');
-+
-+const cache = new Map<string, 'high' | 'normal'>();
- 
- export function riskLevel(title: string): 'high' | 'normal' {
--  // Average over several passes so a partial word match doesn't decide it.
--  let hits = 0;
--  for (let i = 0; i < SAMPLES; i++) {
--    for (const word of keywords) {
--      if (new RegExp(`\\b${word}`, 'i').test(title)) hits++;
--    }
-+  let level = cache.get(title);
-+  if (!level) {
-+    level = riskPattern.test(title) ? 'high' : 'normal';
-+    cache.set(title, level);
-   }
--  return hits / SAMPLES >= 1 ? 'high' : 'normal';
-+  return level;
- }
 diff --git a/src/screens/ChecklistScreen.tsx b/src/screens/ChecklistScreen.tsx
-index 528871b..e3360b8 100644
+index 528871b..267673e 100644
 --- a/src/screens/ChecklistScreen.tsx
 +++ b/src/screens/ChecklistScreen.tsx
-@@ -1,4 +1,4 @@
--import { useEffect, useRef, useState } from 'react';
-+import { useCallback, useEffect, useRef, useState } from 'react';
- import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputInstance } from 'react-native';
- import { FlashList } from '@shopify/flash-list';
- import { Header } from '../components/Header';
-@@ -6,11 +6,35 @@ import { PhotoModal } from '../components/PhotoModal';
+@@ -6,11 +6,33 @@ import { PhotoModal } from '../components/PhotoModal';
  import { QuestionRow } from '../components/QuestionRow';
  import { checklist, type ChecklistItem } from '../lib/data';
  
-+// Owns the note text so keystrokes re-render only this footer, not the whole list.
-+function NotesFooter() {
++// Owns the note text so typing re-renders only this footer, not the whole list.
++function NotesField() {
 +  const [note, setNote] = useState('');
 +  const notes = useRef<TextInputInstance>(null);
 +
@@ -93,8 +30,6 @@ index 528871b..e3360b8 100644
 +  );
 +}
 +
-+const notesFooter = <NotesFooter />;
-+
  export function ChecklistScreen() {
    const [items, setItems] = useState<ChecklistItem[]>([]);
    const [photo, setPhoto] = useState<string | null>(null);
@@ -103,21 +38,7 @@ index 528871b..e3360b8 100644
  
    // Load the list once the JS thread is idle.
    useEffect(() => {
-@@ -18,8 +42,11 @@ export function ChecklistScreen() {
-     return () => cancelIdleCallback(handle);
-   }, []);
- 
--  const answer = (id: string, value: 'yes' | 'no') =>
--    setItems(prev => prev.map(i => (i.id === id && i.kind === 'question' ? { ...i, answer: value } : i)));
-+  const answer = useCallback(
-+    (id: string, value: 'yes' | 'no') =>
-+      setItems(prev => prev.map(i => (i.id === id && i.kind === 'question' ? { ...i, answer: value } : i))),
-+    [],
-+  );
- 
-   const answered = items.filter(i => i.kind === 'question' && i.answer).length;
-   const total = checklist.filter(i => i.kind === 'question').length;
-@@ -41,23 +68,7 @@ export function ChecklistScreen() {
+@@ -41,23 +63,7 @@ export function ChecklistScreen() {
              );
            return <QuestionRow item={item} onAnswer={answer} />;
          }}
@@ -138,7 +59,7 @@ index 528871b..e3360b8 100644
 -            </Pressable>
 -          </ScrollView>
 -        }
-+        ListFooterComponent={notesFooter}
++        ListFooterComponent={<NotesField />}
        />
        <PhotoModal uri={photo} onClose={() => setPhoto(null)} />
      </View>

@@ -9,7 +9,7 @@ import { join } from 'node:path';
 const H = new URL('.', import.meta.url).pathname;
 const scores = existsSync(join(H, 'scores.json')) ? JSON.parse(readFileSync(join(H, 'scores.json'), 'utf8')) : {};
 const runs = readdirSync(join(H, 'runs'))
-  .filter((d) => !d.includes('probe') && existsSync(join(H, 'runs', d, 'result.json')))
+  .filter((d) => !d.includes('probe') && !d.endsWith('-aborted') && existsSync(join(H, 'runs', d, 'result.json')))
   .map((d) => JSON.parse(readFileSync(join(H, 'runs', d, 'result.json'), 'utf8')))
   // Runs cut off by something outside the test (a usage limit) are listed but not counted.
   .filter((r) => !scores[r.id]?.aborted || (console.log(`excluded: ${r.id} (${scores[r.id].note})`), false));

@@ -98,10 +98,19 @@
     ],
     "note": "329 components / ~145 ms per keystroke -> 12 / ~1 ms; NotesFooter; ~2 min lost to a hung react-devtools wait plus agent-react-devtools setup (npm install --save-dev, reverted); final message was a reply to a late background-task notice, real report is the previous message"
   },
-  "argent-performance-2": {
+  "argent-performance-2-aborted": {
     "points": null,
     "aborted": true,
     "criteria": [],
     "note": "ABORTED at 122 s: the Claude account hit its usage limit (resets 1:50pm). Had profiled (before) and applied a fix (memo rows + faster riskLevel + screen changes); no after-measurement or report. Excluded from totals."
+  },
+  "argent-performance-2": {
+    "points": 3,
+    "criteria": [
+      "cause",
+      "measured",
+      "fix"
+    ],
+    "note": "re-run after the usage limit reset: 9 slow commits of 157-179 ms (162 QuestionRow renders, regExpConstructor 943 ms) -> 0 slow commits, RegExp 0 ms; NotesField component"
   }
 }
